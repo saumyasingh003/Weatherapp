@@ -1,0 +1,308 @@
+import axios from "axios";
+import { React, useEffect, useState } from "react";
+
+const Home = () => {
+  const [weather, setWeather] = useState(""); //state declare kiya hai maine...jaha hm api se data call krke store krenge weather array me...setWeather use krke, isliye pehle initial state iska empty array rhega...then..weather constant ka use krke hmlog api ke data ke properties ko acces krenge..got it?..hmm..sure?..hmm
+  const [isLoading, setIsLoading] = useState(true);//initially ye true rhega
+
+  const [latitude, setLatitude] = useState("")
+  const [longitude, setLongitude] = useState("")
+  // useEffect(() => {
+  //   const controller = new AbortController(); //dekho..iska kya use h n..ki jab bhi tum useEffect ke andar api call krti ho n..to vo bhot baar render hota h..means jab bhi kuch changes krogi n..har baar vo phir se api call krta hai...or jo pichla api call tha..vo vaisa ka vaisa hi rhta h...isliye application ko thora fast krne ke liye..AbortController ka use krte h hmlog..jo ki jab bhi dobara api call hoga ..to vo pichle api ka process ko abort kr dega..means ki cleanup kr dega..jisse memory ka space bana rhta hai...got it?yup..sure?  smjh aa gya abort controller ka kam?,basically cleanup function hai ye ...?? hmm....
+  //   const signal = controller.signal;//ye usi ka part h..
+  //   const fetchData = async () => {
+  //       try{//htao sab comments.. rhne do n ..faltu hta do..code bulky legga or messy hata  dungi tm kuch mt karna ..ok.. abhi chorte h na weather  wala ..host kr do are nhi mtlb jo abhi weather.js bana rhi thi wo waala...hmm chor do usko mai khd se try karogi baad me jab fasugi to bataugi ...okk
+  //           const response = await axios.get(
+  //             `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=f1b268376f3ac3a187d1727dc34cafee`
+  //           ,{
+  //             signal: signal
+  //         });
+  //         setWeather(response.data);
+  //         setIsLoading(false)// or jab data fetch hoke store ho jayega,then loading ko false kr denge
+  //       }catch(err){
+  //           console.error(err)
+  //       }
+  //   };
+  //   fetchData(); //ye part smjh aya? jo band kiya maine yaha data ko fetch kar rhe ho..hmm or uska response ko weather array me store krwa rhe h ook..try ...catch..block ka use krte h..error handling ke liye..just like if else ooo
+  //   return ()=>{
+  //       controller.abort()  
+  //   }
+  // }, []);
+
+  const handleSearch = async (e) =>{
+    e.preventDefault();
+    try{
+      setIsLoading(true);
+      const response = await axios.get( `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=f1b268376f3ac3a187d1727dc34cafee`)
+      setWeather(response.data)
+    }
+    catch(error){
+      console.log(error)
+    }
+  }
+  console.log(weather);//then check krne ke liye ki data stor00e hhua h ya ni...hm log krwa ke check kr lenege ek baar 
+  return (
+    <div>
+    {/* //yaha maine conditional rendering lagaya hai..uss time se jo error de rha tha ..isi ke na hone ke wajah se de rha tha..pucho kyu kyu...because..hmne weather ko initialize kiya h empty string se...to jab page load ho rha hoga..to usko sbse pehle vo weather ko check krega..or vo usko empty milega...to vo neeche jayega hi nhi api call krne ke liye..or hmne temp use kr rkha tha..jo use weather  ke string me mila nhi..isliye error de rha tha...isko handle krne ke liye hmne loading ka feature lagaya hai..taki api call hone ka time mil skte thora..so basically iss ocnditional chaining me kya ho rha h ki..agar weather me data exist krta hai..then neeche wala baki part render hoga..warna nhi hoga...ooogot it? hmm..pakka?..koi doubt ho to pucho nhi..okk..to ek or dusra api fetch krke dikhao mujhe..pehel laptop charge me lagao laga di hu..oo sry..waha or bhi apis thay  */}
+
+      <section className="bg-white dark:bg-gray-900">
+        <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-12 lg:px-6">
+        <form onSubmit={handleSearch} className=" justify-center items-center gap-4">
+        <input
+          type="text"
+          value={latitude}
+          onChange={(e) => setLatitude(e.target.value)}
+          placeholder="Latitude"
+          className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <input
+          type="text"
+          value={longitude}
+          onChange={(e) => setLongitude(e.target.value)}
+          placeholder="Longitude"
+          className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button
+          type="submit"
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+        >
+          Search
+        </button>
+      </form>
+
+
+      {weather &&
+        <>
+          <div className="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
+            <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+              Weather of {weather.sys.country}
+            </h2>
+            <p className="mb-5 font-light text-gray-500 sm:text-xl dark:text-gray-400">
+              This weather app provides real-time forecasts and updates, keeping
+              users informed about current conditions and upcoming weather
+              events.
+            </p>
+          </div>
+          <div className="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0">
+            <div className="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
+              <h3 className="mb-4 text-2xl font-semibold">Temperture</h3>
+              <p className="font-light text-gray-500 sm:text-lg dark:text-gray-400">
+                Best for large scale uses and extended redistribution rights
+              </p>
+              <div className="flex justify-center items-baseline my-8">
+                <span className="mr-2 text-5xl font-extrabold">{Math.round(weather.main.temp-273)}</span>
+                <span className="text-gray-500 dark:text-gray-400">deg C </span>
+              </div>
+
+              <ul role="list" className="mb-8 space-y-4 text-left">
+                <li className="flex items-center space-x-3">
+                  <svg
+                    className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                  <span>
+                    Temperature is <span className="font-semibold">{Math.round(weather.main.temp-273)} deg C</span>{" "}
+                  </span>
+                </li>
+                <li className="flex items-center space-x-3">
+                  <svg
+                    className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                  <span>
+                    Max Temperature is{" "}
+                    <span className="font-semibold"> {Math.round(weather.main.temp_max - 273)} deg C</span>
+                  </span>
+                </li>
+                <li className="flex items-center space-x-3">
+                  <svg
+                    className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                  <span>
+                    Min Temperature is
+                    <span className="font-semibold"> {Math.round(weather.main.temp_min - 273)} deg C</span>
+                  </span>
+                </li>
+              </ul>
+              <a
+                href="#"
+                className="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900"
+              >
+                Get started
+              </a>
+            </div>
+            <div className="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
+              <h3 className="mb-4 text-2xl font-semibold">Humidity</h3>
+              <p className="font-light text-gray-500 sm:text-lg dark:text-gray-400">
+                Best for large scale uses and extended redistribution rights
+              </p>
+
+              <div className="flex justify-center items-baseline my-8">
+                <span className="mr-2 text-5xl font-extrabold">{weather.main.humidity}%</span>
+                <span className="text-gray-500 dark:text-gray-400"></span>
+              </div>
+
+              <ul role="list" className="mb-8 space-y-4 text-left">
+                <li className="flex items-center space-x-3">
+                  <svg
+                    className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                  <span>
+                    Wind degree is <span className="font-semibold">{weather.wind.deg}</span>
+                  </span>
+                </li>
+                <li className="flex items-center space-x-3">
+                  <svg
+                    className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                  <span>
+                    Humidity is <span className="font-semibold">{weather.main.humidity}%</span>
+                  </span>
+                </li>
+                <li className="flex items-center space-x-3">
+                  <svg
+                    className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                  <span>
+                    Feels like :<span className="font-semibold">{Math.round(weather.main.feels_like-273)}</span>
+                  </span>
+                </li>
+              </ul>
+              <a
+                href="#"
+                className="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900"
+              >
+                Get started
+              </a>
+            </div>
+            <div className="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
+              <h3 className="mb-4 text-2xl font-semibold">Wind Speed</h3>
+              <p className="font-light text-gray-500 sm:text-lg dark:text-gray-400">
+                Best for large scale uses and extended redistribution rights
+              </p>
+              <div className="flex justify-center items-baseline my-8">
+                <span className="mr-2 text-5xl font-extrabold">{weather.wind.speed}</span>
+                <span className="text-gray-500 dark:text-gray-400">km/hr</span>
+              </div>
+
+              <ul role="list" className="mb-8 space-y-4 text-left">
+                <li className="flex items-center space-x-3">
+                  <svg
+                    className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                  <span>
+                    Wind speed is <span className="font-semibold">{weather.wind.speed} km/hr</span>
+                  </span>
+                </li>
+                <li className="flex items-center space-x-3">
+                  <svg
+                    className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                  <span>
+                    Sunrise time: <span className="font-semibold">{weather.sys.sunrise}</span>
+                  </span>
+                </li>
+                <li className="flex items-center space-x-3">
+                  <svg
+                    className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                  <span>
+                    Sunset time: <span className="font-semibold">{weather.sys.sunset}</span>
+                  </span>
+                </li>
+              </ul>
+              <a
+                href="#"
+                className="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900"
+              >
+                Get started
+              </a>
+            </div>
+          </div>
+          </>
+      }
+        </div>
+      </section>
+    
+    </div>
+  );
+};
